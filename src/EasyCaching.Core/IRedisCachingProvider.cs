@@ -102,16 +102,18 @@
         /// <param name="cacheKey"></param>
         /// <param name="cacheValue"></param>
         /// <param name="expiration"></param>
+        /// <param name="when">nx,xx,</param>
         /// <returns></returns>
-        bool StringSet(string cacheKey, string cacheValue, System.TimeSpan? expiration = null);
+        bool StringSet(string cacheKey, string cacheValue, System.TimeSpan? expiration = null, string when = "");
         /// <summary>
         /// https://redis.io/commands/set
         /// </summary>
         /// <param name="cacheKey"></param>
         /// <param name="cacheValue"></param>
         /// <param name="expiration"></param>
+        /// <param name="when">nx,xx,</param>
         /// <returns></returns>
-        Task<bool> StringSetAsync(string cacheKey, string cacheValue, System.TimeSpan? expiration = null);
+        Task<bool> StringSetAsync(string cacheKey, string cacheValue, System.TimeSpan? expiration = null, string when = "");
         /// <summary>
         /// https://redis.io/commands/get
         /// </summary>
@@ -792,7 +794,6 @@
         Task<double?> ZScoreAsync<T>(string cacheKey, T cacheValue);
         #endregion
 
-
         #region Hyperloglog
         /// <summary>
         /// https://redis.io/commands/pfadd
@@ -836,6 +837,69 @@
         /// <param name="sourceKeys"></param>
         /// <returns></returns>
         Task<bool> PfMergeAsync(string destKey, List<string> sourceKeys);
+        #endregion
+
+        #region Geo
+        /// <summary>
+        /// https://redis.io/commands/geoadd
+        /// </summary>
+        /// <param name="cacheKey"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        long GeoAdd(string cacheKey, List<(double longitude, double latitude, string member)> values);
+        /// <summary>
+        /// https://redis.io/commands/geoadd
+        /// </summary>
+        /// <param name="cacheKey"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        Task<long> GeoAddAsync(string cacheKey, List<(double longitude, double latitude, string member)> values);
+        /// <summary>
+        /// https://redis.io/commands/geodist
+        /// </summary>
+        /// <param name="cacheKey"></param>
+        /// <param name="member1"></param>
+        /// <param name="member2"></param>
+        /// <param name="unit"></param>
+        /// <returns></returns>
+        double? GeoDist(string cacheKey, string member1, string member2, string unit = "m");
+        /// <summary>
+        /// https://redis.io/commands/geodist
+        /// </summary>
+        /// <param name="cacheKey"></param>
+        /// <param name="member1"></param>
+        /// <param name="member2"></param>
+        /// <param name="unit"></param>
+        /// <returns></returns>
+        Task<double?> GeoDistAsync(string cacheKey, string member1, string member2, string unit = "m");
+        /// <summary>
+        /// https://redis.io/commands/geohash
+        /// </summary>
+        /// <param name="cacheKey"></param>
+        /// <param name="members"></param>
+        /// <returns></returns>
+        List<string> GeoHash(string cacheKey, List<string> members);
+        /// <summary>
+        /// https://redis.io/commands/geohash
+        /// </summary>
+        /// <param name="cacheKey"></param>
+        /// <param name="members"></param>
+        /// <returns></returns>
+        Task<List<string>> GeoHashAsync(string cacheKey, List<string> members);
+        /// <summary>
+        /// https://redis.io/commands/geopos
+        /// </summary>
+        /// <param name="cacheKey"></param>
+        /// <param name="members"></param>
+        /// <returns></returns>
+        List<(double longitude, double latitude)?> GeoPos(string cacheKey, List<string> members);
+        /// <summary>
+        /// https://redis.io/commands/geopos
+        /// </summary>
+        /// <param name="cacheKey"></param>
+        /// <param name="members"></param>
+        /// <returns></returns>
+        Task<List<(double longitude, double latitude)?>> GeoPosAsync(string cacheKey, List<string> members);
         #endregion
     }
 }

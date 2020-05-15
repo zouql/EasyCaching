@@ -90,7 +90,7 @@
             if (_options.EnableLogging)
                 _logger?.LogInformation($"Cache Missed : cachekey = {cacheKey}");
 
-            var flag = await _cache.SetAsync($"{cacheKey}_Lock", 1, TimeSpan.FromMilliseconds(_options.LockMs).Seconds, RedisExistence.Nx);
+            var flag = await _cache.SetAsync($"{cacheKey}_Lock", 1, (int)TimeSpan.FromMilliseconds(_options.LockMs).TotalSeconds, RedisExistence.Nx);
 
             if (!flag)
             {
@@ -176,6 +176,30 @@
 
                 return CacheValue<T>.NoValue;
             }
+        }
+
+        /// <summary>
+        /// Gets the count.
+        /// </summary>
+        /// <returns>The count.</returns>
+        /// <param name="prefix">Prefix.</param>
+        public override Task<int> BaseGetCountAsync(string prefix = "")
+        {
+            if (string.IsNullOrWhiteSpace(prefix))
+            {
+                var allCount = 0L;
+
+                var servers = _cache.NodesServerManager.DbSize();
+
+                foreach (var item in servers)
+                {
+                    allCount += item.value;
+                }
+
+                return Task.FromResult((int)allCount);
+            }
+
+            return Task.FromResult(SearchRedisKeys(HandlePrefix(prefix)).Length);
         }
 
         /// <summary>
